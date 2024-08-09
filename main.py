@@ -2,8 +2,9 @@ import yt_dlp
 from fastapi import FastAPI, Form
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
-
+app = FastAPI() 
+ 
+ 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # or specify allowed origins like ["https://example.com"]
