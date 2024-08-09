@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>YouTube Video Downloader</title>
+</head>
+<body >
+   
+    <div class="container ">
+        <div class="heading">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-arrow-down-circle" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293z"/>
+            </svg>
+            <h1>YouTube Video Downloader</h1>
+        </div>
+
+        <form id="download-form" method="POST">
+            <input type="text" id="video_url" name="video_url" placeholder="Enter YouTube video URL" required>
+            <button type="submit">Download</button>
+        </form>
+
+        <p id="status-message"></p>
+    </div>
+
+    <script>
+        document.getElementById("download-form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const videoUrl = document.getElementById("video_url").value;
+
+            const formData = new FormData();
+            formData.append("video_url", videoUrl);
+
+            const response = await fetch("http://127.0.0.1:8000/download", {
+                method: "POST",
+                body: formData
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                document.getElementById("status-message").textContent = result.message;
+            } else {
+                document.getElementById("status-message").textContent = "Failed to start download.";
+            }
+        });
+    </script>
+</body>
+</html>
