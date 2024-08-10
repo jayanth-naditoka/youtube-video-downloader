@@ -5,7 +5,7 @@ import yt_dlp
 import os
 
 app = FastAPI()
-templates = Jinja2Templates(directory="youtubeVideoDownloader")
+templates = Jinja2Templates(directory="templates")
 
 # Route for the home page
 @app.get("/", response_class=HTMLResponse)
