@@ -1,30 +1,37 @@
-from fastapi import FastAPI, Request, Form, UploadFile, File
-from fastapi.responses import HTMLResponse, FileResponse
-from fastapi.templating import Jinja2Templates
 import yt_dlp
-import os
+from fastapi import FastAPI, Form,Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 
-app = FastAPI()
+
+app = FastAPI() 
+ 
+ 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or specify allowed origins like ["https://example.com"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 templates = Jinja2Templates(directory="templates")
 
-# Route for the home page
 @app.get("/", response_class=HTMLResponse)
-@app.head("/", response_class=HTMLResponse)
-async def read_root(request: Request):
+def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-# Route to handle the form submission for downloading the video
 @app.post("/download")
-async def download_video(request: Request, url: str = Form(...)):
+def download_youtube_video(video_url: str = Form(...)):
     ydl_opts = {
-        'outtmpl': 'downloads/%(title)s.%(ext)s',
-    }
+        'format': 'best',
+        'outtmpl': './%(title)s.%(ext)s',
+    } 
+
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info_dict = ydl.extract_info(url, download=True)
-        video_title = ydl.prepare_filename(info_dict)
-        return FileResponse(video_title, filename=os.path.basename(video_title))
+        ydl.download([video_url])
 
-
+    return {"message": "Download started!"}
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
