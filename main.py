@@ -24,3 +24,6 @@ def download_youtube_video(video_url: str = Form(...)):
         ydl.download([video_url])
 
     return {"message": "Download started!"}
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
